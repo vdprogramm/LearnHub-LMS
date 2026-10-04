@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X, Bell, User as UserIcon, LogOut } from 'lucide-react';
+import { Menu, Bell, User as UserIcon, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   toggleSidebar: () => void;

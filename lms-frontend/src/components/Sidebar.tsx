@@ -8,8 +8,15 @@ import {
   Award, 
   Users, 
   Settings,
-  X
+  X,
+  type LucideIcon
 } from 'lucide-react';
+
+interface MenuItem {
+  name: string;
+  path: string;
+  icon: LucideIcon;
+}
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,9 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
   const { user } = useAuth();
   if (!user) return null;
 
-  const role = user.role;
-
-  const menuItems = {
+  const menuItems: Record<'student' | 'instructor' | 'admin', MenuItem[]> = {
     student: [
       { name: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
       { name: 'My Courses', path: '/student/my-courses', icon: BookOpen },
@@ -42,7 +47,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
     ]
   };
 
-  const currentMenu = menuItems[role] || [];
+  const roleKey = user?.role?.toLowerCase() as keyof typeof menuItems;
+
+  const currentMenu = roleKey
+    ? menuItems[roleKey] ?? []
+    : [];
 
   return (
     <>
@@ -86,8 +95,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
                   if (window.innerWidth < 1024) closeSidebar();
                 }}
               >
-                <Icon size={20} className={({ isActive }: any) => isActive ? 'text-primary' : 'text-gray-500'} />
-                {item.name}
+                {({ isActive }) => (
+                  <>
+                    <Icon size={20} className={isActive ? 'text-primary' : 'text-gray-500'} />
+                    {item.name}
+                  </>
+                )}
               </NavLink>
             );
           })}
@@ -95,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar }) => {
         
         <div className="p-4 border-t border-gray-200">
           <NavLink
-            to={`/${role}/settings`}
+            to={`/${roleKey}/settings`}
             className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-xl transition-all"
           >
             <Settings size={20} />
